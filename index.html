@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carnet de Golf</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #1a3a2a;
+    --green-mid: #2d5a3d;
+    --green-light: #4a8c5c;
+    --green-pale: #a8d4b0;
+    --cream: #f5f0e8;
+    --cream-dark: #e8e0d0;
+    --gold: #c9a84c;
+    --gold-light: #e8c96a;
+    --ink: #1a1a14;
+    --ink-mid: #3a3a2e;
+    --text-muted: #7a7a68;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--green-deep);
+    min-height: 100vh;
+    font-family: 'DM Mono', monospace;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+    background-image: 
+      radial-gradient(ellipse at 20% 50%, rgba(45,90,61,0.4) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(74,140,92,0.2) 0%, transparent 50%);
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 6vw, 3.8rem);
+    color: var(--cream);
+    line-height: 1.1;
+    font-weight: 700;
+  }
+
+  .header h1 em {
+    color: var(--gold-light);
+    font-style: italic;
+  }
+
+  .header-sub {
+    font-size: 12px;
+    color: var(--green-pale);
+    margin-top: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .tabs-label {
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: rgba(0,0,0,0.3);
+    padding: 5px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 780px;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  .tabs:last-of-type { margin-bottom: 28px; }
+
+  .tab {
+    padding: 9px 18px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--green-pale);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    cursor: pointer;
+    transition: all 0.22s;
+    white-space: nowrap;
+  }
+
+  .tab:hover { color: var(--cream); background: rgba(255,255,255,0.07); }
+
+  .tab.active {
+    background: var(--gold);
+    color: var(--green-deep);
+    font-weight: 500;
+  }
+
+  .card {
+    background: var(--cream);
+    border-radius: 20px;
+    max-width: 780px;
+    width: 100%;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,76,0.2);
+    animation: fadeUp 0.8s 0.35s ease both;
+  }
+
+  .card-header {
+    background: var(--green-mid);
+    padding: 28px 36px 24px;
+    display: flex;
+    align-items: flex-end;
+    gap: 20px;
+    border-bottom: 3px solid var(--gold);
+  }
+
+  .club-icon {
+    font-size: 2.8rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
+  }
+
+  .card-header-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.7rem;
+    color: var(--cream);
+    font-weight: 700;
+  }
+
+  .card-header-text .badge {
+    display: inline-block;
+    margin-top: 5px;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: rgba(201,168,76,0.12);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+
+  .notes-area {
+    padding: 32px 36px;
+  }
+
+  .section-title {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  .tips-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+
+  @media (max-width: 560px) { .tips-grid { grid-template-columns: 1fr; } }
+
+  .tip-card {
+    background: var(--green-deep);
+    border-radius: 12px;
+    padding: 16px 18px;
+    border-left: 3px solid var(--gold);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .tip-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(26,58,42,0.25);
+  }
+
+  .tip-number {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .tip-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    color: var(--cream);
+    font-weight: 700;
+    margin-bottom: 5px;
+  }
+
+  .tip-desc {
+    font-size: 11.5px;
+    color: var(--green-pale);
+    line-height: 1.6;
+  }
+
+  .notes-block { margin-top: 8px; }
+
+  .notes-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .notes-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--cream-dark);
+  }
+
+  .notes-textarea {
+    width: 100%;
+    min-height: 110px;
+    background: #faf7f0;
+    border: 1.5px solid var(--cream-dark);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--ink-mid);
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    line-height: 1.8;
+    background-image: repeating-linear-gradient(transparent, transparent 28px, #e8e0d0 28px, #e8e0d0 29px);
+    background-attachment: local;
+  }
+
+  .notes-textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+
+  .notes-textarea::placeholder { color: #b8b0a0; font-style: italic; }
+
+  .key-tip {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .key-tip-icon { font-size: 1.4rem; flex-shrink: 0; }
+  .key-tip-text { font-size: 12.5px; color: var(--green-deep); line-height: 1.6; font-weight: 500; }
+
+  .key-tip-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: rgba(26,58,42,0.6);
+    margin-bottom: 3px;
+  }
+
+  .btn-save {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 11px 24px;
+    background: var(--green-deep);
+    color: var(--gold);
+    border: 1.5px solid var(--gold);
+    border-radius: 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .btn-save:hover { background: var(--gold); color: var(--green-deep); }
+
+  .save-msg {
+    font-size: 11px;
+    color: var(--green-light);
+    margin-top: 8px;
+    opacity: 0;
+    transition: opacity 0.4s;
+    letter-spacing: 0.1em;
+  }
+
+  .save-msg.show { opacity: 1; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .panel.active .tips-grid .tip-card { animation: fadeUp 0.4s ease both; }
+  .panel.active .tips-grid .tip-card:nth-child(2) { animation-delay: 0.05s; }
+  .panel.active .tips-grid .tip-card:nth-child(3) { animation-delay: 0.10s; }
+  .panel.active .tips-grid .tip-card:nth-child(4) { animation-delay: 0.15s; }
+  .panel.active .tips-grid .tip-card:nth-child(5) { animation-delay: 0.20s; }
+  .panel.active .tips-grid .tip-card:nth-child(6) { animation-delay: 0.25s; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Carnet de Bord</div>
+  <h1>L'Art du <em>Golf</em></h1>
+  <div class="header-sub">Conseils pratiques · Notes personnelles · Progression</div>
+</div>
+
+<div class="tabs-label">Stratégie & Situations</div>
+<div class="tabs">
+  <button class="tab active" onclick="showPanel('strategie', this)">Stratégie</button>
+  <button class="tab" onclick="showPanel('trajectoire', this)">Trajectoire</button>
+  <button class="tab" onclick="showPanel('fairway', this)">Fairway</button>
+  <button class="tab" onclick="showPanel('rough', this)">Rough</button>
+  <button class="tab" onclick="showPanel('greenposition', this)">Dénivelé</button>
+  <button class="tab" onclick="showPanel('gestionduvent', this)">Vent & Green Position</button>
+</div>
+
+<div class="tabs-label">Les Clubs</div>
+<div class="tabs">
+  <button class="tab" onclick="showPanel('drive', this)">Drive</button>
+  <button class="tab" onclick="showPanel('bois', this)">Bois & Hybride</button>
+  <button class="tab" onclick="showPanel('fer', this)">Fers</button>
+  <button class="tab" onclick="showPanel('wedge', this)">Wedging</button>
+  <button class="tab" onclick="showPanel('approche', this)">Approche</button>
+  <button class="tab" onclick="showPanel('bunker', this)">Bunker</button>
+  <button class="tab" onclick="showPanel('putting', this)">Putting</button>
+  <button class="tab" onclick="showPanel('mental', this)">Mental</button>
+</div>
+
+<div class="card">
+
+  <!-- STRATÉGIE -->
+  <div class="panel active" id="panel-strategie">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Stratégie</h2>
+        <span class="badge">Gestion de parcours · Intention</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Avant chaque coup, toujours se demander où on peut rater et jouer en conséquence. Avoir une intention claire : un seul facteur à penser (contact, trajectoire, rythme).
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — INTENTION</div>
+          <div class="tip-title">Un seul facteur</div>
+          <div class="tip-desc">Avant chaque coup, penser à un seul facteur de swing. Cela peut être un contact, une trajectoire, un rythme. Jamais plusieurs choses à la fois.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — GESTION DU RISQUE</div>
+          <div class="tip-title">Où puis-je rater ?</div>
+          <div class="tip-desc">Toujours identifier la zone de sécurité avant de frapper. Viser le centre du green plutôt que le drapeau. Un par fiable vaut mieux qu'un eagle tenté et un double bogey obtenu.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — MISE EN JEU</div>
+          <div class="tip-title">Jouer intelligent</div>
+          <div class="tip-desc">Sur les trous difficiles, privilégier la sécurité. Choisir le club qui maximise les chances de rester en jeu, pas forcément celui qui donne le plus de distance.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — ROUTINE</div>
+          <div class="tip-title">Pré-shot routine</div>
+          <div class="tip-desc">Toujours la même séquence : lecture, choix du club, visualisation, 1-2 swings d'entraînement, adresse, swing. La routine évacue la pression et crée la régularité.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-strategie" placeholder="Ex : Tendance à viser le drapeau sur les par 3. Jouer plus vers le centre..." onblur="saveNote('strategie')"></textarea>
+        <button class="btn-save" onclick="saveNote('strategie')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-strategie">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TRAJECTOIRE -->
+  <div class="panel" id="panel-trajectoire">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Trajectoires</h2>
+        <span class="badge">Fade · Draw · Haute · Basse</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Les trajectoires se contrôlent de deux manières : la position du corps face à la balle, ou le chemin du club dans le plan de swing. La face du club détermine le départ, le chemin détermine la courbe.
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — FADE</div>
+          <div class="tip-title">Comment jouer un fade</div>
+          <div class="tip-desc">Ouvrir le stance vers la gauche. Balle en avant dans le stance. Face du club pointant la cible. Chemin de swing vers la gauche (out-to-in). La balle part à gauche et revient vers la droite.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — DRAW</div>
+          <div class="tip-title">Comment jouer un draw</div>
+          <div class="tip-desc">Fermer légèrement le stance vers la droite. Balle en arrière dans le stance. Face légèrement fermée par rapport au chemin. Chemin de swing de l'intérieur vers l'extérieur (in-to-out). La balle part à droite et revient vers la gauche.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — BASSE</div>
+          <div class="tip-title">Trajectoire basse</div>
+          <div class="tip-desc">Reculer la balle dans le stance. Mains en avant de la balle (shaft lean). Swing 3/4, finish bas. Utile par vent de face ou sous les arbres.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — HAUTE</div>
+          <div class="tip-title">Trajectoire haute</div>
+          <div class="tip-desc">Avancer légèrement la balle dans le stance. Club plus ouvert. Laisser le loft travailler naturellement. Ne pas essayer de lever la balle en forçant.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-trajectoire" placeholder="Ex : Mon draw naturel part trop à droite. Fermer moins la face..." onblur="saveNote('trajectoire')"></textarea>
+        <button class="btn-save" onclick="saveNote('trajectoire')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-trajectoire">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAIRWAY -->
+  <div class="panel" id="panel-fairway">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Fairway</h2>
+        <span class="badge">Jeu normal · Rythme</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Le rythme (tempo) est primordial. C'est un refuge lorsque le contact de balle ne va pas ou quand on commence à vouloir frapper trop fort. Reprendre, respirer, penser au rythme.
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — RYTHME</div>
+          <div class="tip-title">Le tempo comme refuge</div>
+          <div class="tip-desc">Quand le swing déraille, revenir au rythme. Swinguer à 80% avec régularité est toujours plus efficace que forcer à 100%. Le rythme est la base de tout.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — CONTACT</div>
+          <div class="tip-title">Jouer normalement</div>
+          <div class="tip-desc">Depuis le fairway, jouer son jeu naturel. Pas besoin d'adapter le swing. Se concentrer sur le contact propre et la direction. Laisser le club faire le travail.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — CHOIX DU CLUB</div>
+          <div class="tip-title">Prendre un club de plus</div>
+          <div class="tip-desc">Toujours mieux swinguer à 80% avec un club de plus que de forcer à 100%. Le contact est plus propre, la direction plus précise, et le résultat plus régulier.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — INTENTION</div>
+          <div class="tip-title">Un facteur à la fois</div>
+          <div class="tip-desc">Avant chaque coup depuis le fairway, choisir un seul élément sur lequel se concentrer. Contact, trajectoire ou rythme. Jamais plusieurs pensées en même temps.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-fairway" placeholder="Ex : Penser au rythme sur les coups de fer long depuis le fairway..." onblur="saveNote('fairway')"></textarea>
+        <button class="btn-save" onclick="saveNote('fairway')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-fairway">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ROUGH -->
+  <div class="panel" id="panel-rough">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Rough</h2>
+        <span class="badge">Lie · Choix du club · Sortie</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Faire attention au positionnement de la balle. Si enfoncée dans le rough, les bois sont déconseillés. Préférer un fer ouvert (à partir du 7) ou un hybride. Si posée parfaitement, le bois est possible.
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — ANALYSE DU LIE</div>
+          <div class="tip-title">Lire la situation</div>
+          <div class="tip-desc">Évaluer d'abord la profondeur de la balle dans le rough. Plus elle est enfoncée, moins on a d'options. Toujours privilégier la sortie sécurisée sur la distance.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — ROUGH PROFOND</div>
+          <div class="tip-title">Balle enfoncée</div>
+          <div class="tip-desc">Bois de parcours déconseillé. Prendre un fer ouvert (7 minimum) ou un hybride. L'objectif est de sortir proprement, pas de gagner de la distance. Bien traverser dans la balle à l'impact.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — ROUGH LÉGER</div>
+          <div class="tip-title">Balle posée parfaitement</div>
+          <div class="tip-desc">Le bois peut être utilisé. Jouer normalement mais bien traverser la balle pour ne pas rester accroché dans le rough.</br><br>
+          Attention à l'effet "flyer" : moins de spin, balle qui vole plus loin.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — EFFET FLYER</div>
+          <div class="tip-title">Attention au flyer</div>
+          <div class="tip-desc">De l'herbe entre la face et la balle réduit le backspin. La balle vole plus loin que prévu et s'arrête moins vite. Prendre un club de moins pour compenser depuis un rough léger.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-rough" placeholder="Ex : Tendance à vouloir trop récupérer depuis le rough profond. Jouer la sécurité..." onblur="saveNote('rough')"></textarea>
+        <button class="btn-save" onclick="saveNote('rough')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-rough">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GREEN POSITION -->
+  <div class="panel" id="panel-greenposition">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Dénivelé du Terrain</h2>
+        <span class="badge">Pentes · Ajustements</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Toujours penser à la géométrie. Épaules dans l'axe de la pente, adapter le stance et ne jamais essayer de corriger la trajectoire naturelle — la jouer avec intention.
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — DESCENTE</div>
+          <div class="tip-title">Corps en descente vers le drapeau</div>
+          <div class="tip-desc">Épaules dans l'axe de la pente. Ouvrir légèrement le stance vers la gauche pour laisser le club traverser. Surtout ne pas se lever. Finish bas. Trajectoire naturellement basse, donc ne pas avoir peur de rentrer dans la balle comme si on la jouait coup basse — ne pas essayer de lever la balle.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — MONTÉE</div>
+          <div class="tip-title">Corps en montée vers le drapeau</div>
+          <div class="tip-desc">Épaules dans l'axe de la pente (épaule arrière plus basse). Prendre 1 club de plus car l'alignement des épaules avec le terrain ouvre nturellement le loft du club. Balle légèrement avancée dans le stance. Finish haut et complet. La balle montera plus haut naturellement.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — BALLE SOUS LES PIEDS</div>
+          <div class="tip-title">Fade naturel</div>
+          <div class="tip-desc">La trajectoire sera presque toujours un fade. En conséquence, placement plus ouvert vers la gauche pour compenser. Genoux plus fléchis et se rapprocher de la balle. Viser à gauche de la cible.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — BALLE AU-DESSUS DES PIEDS</div>
+          <div class="tip-title">Draw naturel</div>
+          <div class="tip-desc">La trajectoire sera presque toujours un draw. En conséquence, placement plus fermé vers la droite. Se tenir grand, raccourcir le grip et s'éloigner de la balle. Viser à droite de la cible.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-greenposition" placeholder="Ex : Sur les descentes, tendance à me lever à l'impact. Penser au finish bas..." onblur="saveNote('greenposition')"></textarea>
+        <button class="btn-save" onclick="saveNote('greenposition')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-greenposition">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GESTION DU VENT -->
+  <div class="panel" id="panel-gestionduvent">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Gestion du Vent & Green Position</h2>
+        <span class="badge">Face · Dos · Côté</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Par vent de face, swinguer à 80% avec un club de plus. Moins d'effort = moins d'effet parasite. Ne jamais essayer de frapper plus fort contre le vent.
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — VENT DE FACE</div>
+          <div class="tip-title">Into the wind</div>
+          <div class="tip-desc">Prendre 1 à 2 clubs de plus selon l'intensité. Balle légèrement reculée dans le stance. Swing à 80%. Trajectoire basse perce mieux le vent. Ne pas forcer — la vitesse amplifie le spin et l'effet de vent.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — VENT DE DOS</div>
+          <div class="tip-title">Downwind</div>
+          <div class="tip-desc">Prendre 1 club de moins. Laisser le vent travailler, ne pas forcer.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — VENT DE CÔTÉ</div>
+          <div class="tip-title">Crosswind</div>
+          <div class="tip-desc">Jouer avec le vent : viser en dehors de la cible et laisser le vent ramener la balle. Plus simple et plus sûr que d'essayer de jouer contre. Adapter la marge selon l'intensité.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — ATTAQUE DE GREEN</div>
+          <div class="tip-title">Green en contre bas</div>
+          <div class="tip-desc">Prendre 1 à 2 clubs de moins.</br><br>
+          <div class="tip-title">Green en montée</div>
+          Prendre 1 à 2 clubs de plus.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-gestionduvent" placeholder="Ex : Par vent fort de face, prendre 2 clubs de plus et viser le centre du green..." onblur="saveNote('gestionduvent')"></textarea>
+        <button class="btn-save" onclick="saveNote('gestionduvent')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-gestionduvent">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DRIVE -->
+  <div class="panel" id="panel-drive">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Le Drive</h2>
+        <span class="badge">Mise en jeu · Distance</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Tee haut · Balle en face de l'intérieur du pied avant · Frapper en montant (angle d'attaque positif) pour maximiser la distance
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — POSTURE</div>
+          <div class="tip-title">Écartement & équilibre</div>
+          <div class="tip-desc">Pieds plus larges que les épaules. Légère inclinaison du buste vers l'arrière (spine tilt) pour créer un axe de rotation optimal.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — BACKSWING</div>
+          <div class="tip-title">Rotation complète</div>
+          <div class="tip-desc">Lors de la montée, il faut garder les mains et le club dans le plan du swing. La face du club pointe vers le ciel. Au plus l'envergure du swing est grand, au plus vous générerez de la vitesse. Rotation des épaules à 90°, hanches à 45°.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — IMPACT</div>
+          <div class="tip-title">Montée de balle</div>
+          <div class="tip-desc">Transférer le poids sur le pied avant AVANT l'impact. Frapper la balle en phase montante du swing. La tête reste derrière la balle.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-drive" placeholder="Ex : Tendance à couper la balle... travailler le chemin de swing de droite à gauche..." onblur="saveNote('drive')"></textarea>
+        <button class="btn-save" onclick="saveNote('drive')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-drive">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOIS & HYBRIDE -->
+  <div class="panel" id="panel-bois">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Bois de Parcours & Hybride</h2>
+        <span class="badge">Distance & fairway · Polyvalence</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Bois : Sweep la balle, contact rasant, pas de divot · Laisser le loft travailler · Rythme +++ : club qui pardonne le moins les swings forcés<br><br>
+          Hybride : Club polyvalent et pardonneur · Depuis le rough, meilleur choix que le bois
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — POSTURE</div>
+          <div class="tip-desc">
+            <div class="tip-title">Bois de parcours (3,5,7)</div>
+            Balle légèrement avancée, un pas avant le centre du stance. Stance un peu moins large que le driver.<br><br>
+            <div class="tip-title">Hybride</div>
+            Balle centrée ou légèrement avancée dans le stance. Stance confortable, ni trop large ni trop étroit.
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — CONTACT</div>
+          <div class="tip-desc">
+            <div class="tip-title">Bois de parcours (3,5,7)</div>
+            Contact rasant sur la balle, pas de divot. Ne pas essayer de lever la balle — laisser le loft du club faire le travail.<br><br>
+            <div class="tip-title">Hybride</div>
+            Depuis le fairway, il se joue comme un fer. Angle d'attaque légèrement descendant, petit divot devant. Swing rythmé, pas besoin de forcer.
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — RYTHME</div>
+          <div class="tip-desc">
+            <div class="tip-title">Bois de parcours (3,5,7)</div>
+            Rythme primordial. C'est le club qui pardonne le moins les swings forcés. Swing fluide et contrôlé, finish haut et complet.<br><br>
+            <div class="tip-title">Hybride</div>
+            Swing normal, pas besoin de forcer. Club pardonneur et facile à mettre en jeu.
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — ROUGH</div>
+          <div class="tip-desc">
+            <div class="tip-title">Bois de parcours (3,5,7)</div>
+            Depuis le rough profond : déconseillé. Si la balle est posée parfaitement, c'est possible mais il faut bien traverser et ne pas rester bloqué. Sinon il est préférable d'utiliser l'hybride ou un fer long.<br><br>
+            <div class="tip-title">Hybride</div>
+            Depuis le rough, c'est un meilleur choix que le bois. Le club traverse mieux l'herbe grâce à sa tête compacte. Bien traverser la balle, ne pas ralentir à l'impact.
+          </div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-bois" placeholder="Ex : Tendance à vouloir lever la balle..." onblur="saveNote('bois')"></textarea>
+        <button class="btn-save" onclick="saveNote('bois')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-bois">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FERS -->
+  <div class="panel" id="panel-fer">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Les Fers</h2>
+        <span class="badge">Précision & contrôle</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Frapper les fers en descendant (divot après la balle) · La balle se positionne au centre ou légèrement en arrière du stance
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — POSTURE</div>
+          <div class="tip-desc">
+            <div class="tip-title">Longs fers (2,3,4)</div>
+            Balle légèrement avancée dans le stance. Stance large, bon équilibre.<br><br>
+            <div class="tip-title">Fers moyens (5,6,7)</div>
+            Balle centrée/légèrement avancée dans le stance. Stance confortable, niveau épaule.<br><br>
+            <div class="tip-title">Petits fers (8,9,P)</div>
+            Balle au centre du stance. Stance légèrement plus étroit.
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — SWING</div>
+          <div class="tip-title">Angle d'attaque négatif</div>
+          <div class="tip-desc">Angle d'attaque légèrement descendant, petit divot devant la balle. Ne pas forcer, rythme primordial — ces clubs amplifient les erreurs. Contact propre avant tout.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — DISTANCE</div>
+          <div class="tip-title">Maîtriser ses distances</div>
+          <div class="tip-desc">Connaître ses distances par cœur. Prendre un club de plus et swinguer à 80% plutôt que de forcer à 100%. C'est préférable de primer la régularité et non la distance.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — TRAJECTOIRE</div>
+          <div class="tip-title">Contrôle de la balle</div>
+          <div class="tip-desc">Pour un draw : chemin de club de l'intérieur, face légèrement fermée.</br><br>
+          Pour un fade : chemin vers l'extérieur, face légèrement ouverte.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-fer" placeholder="Ex : Distances avec fer 7 = ~150m. Penser à compresser..." onblur="saveNote('fer')"></textarea>
+        <button class="btn-save" onclick="saveNote('fer')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-fer">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEDGING -->
+  <div class="panel" id="panel-wedge">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Les Coups de Wedge</h2>
+        <span class="badge">Wedging & Contrôle de Distance</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Balle au milieu du stance, mains au niveau des épaules, swing dans un plan plus vertical · Décomposer en 3 amplitudes : 9h, 10h, 12h · Mémoriser ses distances à chaque niveau
+        </div>
+      </div>
+      <div class="section-title">Les Fondamentaux</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — POSTURE</div>
+          <div class="tip-title">Écartement & équilibre</div>
+          <div class="tip-desc">Balle au milieu du stance, mains au niveau des épaules et swing dans un plan plus vertical.<br><br>
+          Décomposer le swing en 3 niveaux : mains à 9h, 10h, ou 12h. Mémoriser les distances pour chaque niveau avec chaque wedge. Répéter en pratique.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — WEDGING</div>
+          <div class="tip-title">À 30 mètres</div>
+          <div class="tip-desc">Utiliser un wedge de 56°, faire un 1/4 de swing et terminer par un finish accompagné haut.<br><br>
+          Le fait d'utiliser un club ouvert va vous aider a mettre du backspin dans la balle et, par conséquent, arrêter la balle plus rapidement. Le rythme est primordial - n'accélérer pas, ne décélérer pas.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — WEDGING</div>
+          <div class="tip-title">À 40 mètres</div>
+          <div class="tip-desc">Utiliser un wedge de 56°, faire un 1/2 de swing et terminer par un finish accompagné haut. Le rythme est primordial — ni accélérer, ni décélérer.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — WEDGING</div>
+          <div class="tip-title">À 50 mètres</div>
+          <div class="tip-desc">Utiliser un wedge de 56°, faire un 3/4 de swing et terminer par un finish accompagné haut. Le rythme est primordial — ni accélérer, ni décélérer.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-wedge" placeholder="Ex : SW à 10h = ~70m. Penser à accélérer sur le pitch..." onblur="saveNote('wedge')"></textarea>
+        <button class="btn-save" onclick="saveNote('wedge')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-wedge">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- APPROCHE -->
+  <div class="panel" id="panel-approche">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Les Coups d'Approche</h2>
+        <span class="badge">Wedging & Chipping</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Autour du green, pensez toujours "chip d'abord" : rouler la balle est plus facile à contrôler que la faire voler · Utiliser le lob uniquement si obstacle à franchir
+        </div>
+      </div>
+      <div class="section-title">Types de coups</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — CHIPPING</div>
+          <div class="tip-title">Approche roulée : 8 - P</div>
+          <div class="tip-desc">Stance étroit, poids sur le pied avant, main sur la jambe avant et balle pied arrière. Coup réalisé comme au putting, càd, peu/pas de poignet. Swing bras-épaules sans rotation. Balle courte en l'air, longue au sol. Idéal fairway proche du green.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — CHIPPING</div>
+          <div class="tip-title">Approche levée : 52 - 58</div>
+          <div class="tip-desc">Première possibilité : Stance étroit, poids sur le pied avant, main sur la jambe avant et balle pied arrière. Avec cela, la sortie de balle sera basse, avec un ratio de vol de balle de 1:1.<br><br>
+          Deuxième possibilité : Stance étroit, poids sur le pied avant, main centrée et balle centrée. Avec cela, la sortie de balle sera haute avec du spin, et dont le ratio de vol de balle est de 3:1.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — LOB</div>
+          <div class="tip-title">Approche lobée : 58 - 60</div>
+          <div class="tip-desc">Coup réalisé comme une sortie de bunker, càd, ouvrir un maximum la face de club, grand back swing, objectif contact. Utiliser le bounce du club.<br><br>
+          Coup risqué — ne l'utiliser qu'en cas de nécessité absolue.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — INTENTION</div>
+          <div class="tip-title">Visualiser le point de chute</div>
+          <div class="tip-desc">Toujours visualiser et avoir l'intention de faire tomber la balle sur un point précis. La roule fera le reste. Ne jamais frapper sans avoir identifié ce point au sol.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-approche" placeholder="Ex : SW à 10h = ~70m. Penser à accélérer sur le pitch..." onblur="saveNote('approche')"></textarea>
+        <button class="btn-save" onclick="saveNote('approche')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-approche">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUNKER -->
+  <div class="panel" id="panel-bunker">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Bunker</h2>
+        <span class="badge">Green · Fairway</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          En bunker de green, ne jamais toucher la balle directement. Frapper le sable 5–7cm derrière la balle et laisser le bounce du sand wedge rebondir. Swing complet et accéléré.
+        </div>
+      </div>
+      <div class="section-title">Techniques</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — POSTURE</div>
+          <div class="tip-title">Installation dans le bunker</div>
+          <div class="tip-desc">Pieds bien enfoncés dans le sable, cela permet de sentir si il ya beaciup ou peu de sable. Face du club ouverte (alignée vers la cible). Corps ouvert à gauche de la cible. Grip légèrement plus bas sur le grip.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — SWING</div>
+          <div class="tip-title">Explosion shot</div>
+          <div class="tip-desc">Toujours prendre le sable en premier, OBJECTIF = le sable. La "bounce" permet de ne pas planter le club dans le sable.<br><br>
+          Ne jamais décélérer !</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — DISTANCE</div>
+          <div class="tip-title">Moduler la distance</div>
+          <div class="tip-desc">Au plus on ouvre la face et on prend du sable AVANT la balle, au plus elle monte haut et s'arrête vite. Réduire l'amplitude pour les bunkers proches du drapeau.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — FAIRWAY</div>
+          <div class="tip-title">Bunker de fairway</div>
+          <div class="tip-desc">Contrairement au bunker de green, ici on touche la balle en premier (comme un fer normal). Prendre un club de plus. Grip plus court. Swing 3/4. Stabilité des jambes.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-bunker" placeholder="Ex : Tendance à planter le club. Penser à utiliser le bounce, ne pas creuser..." onblur="saveNote('bunker')"></textarea>
+        <button class="btn-save" onclick="saveNote('bunker')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-bunker">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PUTTING -->
+  <div class="panel" id="panel-putting">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Le Putting</h2>
+        <span class="badge">Analyse · Lecture du green · Rythme</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Le putting représente ~40% des coups d'un parcours. La distance est plus importante que la direction. Un 3-putt provient presque toujours d'un mauvais calibrage de distance, pas d'un mauvais alignement.
+        </div>
+      </div>
+      <div class="section-title">Technique & lecture</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — POSTURE</div>
+          <div class="tip-title">Regard sur la balle</div>
+          <div class="tip-desc">Les yeux sont placés directement au-dessus de la balle. Corps parallèle à la ligne de putt. Les coudes restent proches du corps et les poignets sont verrouillés.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — RYTHME</div>
+          <div class="tip-title">Métronome naturel</div>
+          <div class="tip-desc">Backswing et follow-through égaux. Pas de décélération, ni d'accélération. Imaginer un pendule d'horloge. La distance se contrôle par l'amplitude, pas par la force.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — LECTURE</div>
+          <div class="tip-desc">
+            <div class="tip-title">Lire le green</div>
+            Premièrement, regarder si c’est un putt en montée ou en descente.<br><br>
+            Deuxièmement, identifier la tendance générale du terrain; droit, droite/gauche, gauche/droite.</br><br>
+            Aller systématiquement derrière le trou pour confirmer la pente lu précédemment. Sur de longue distance, viser une zone de 1m de diamètre, pas le trou.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — DOSAGE</div>
+          <div class="tip-desc">
+            <div class="tip-title">La règle d'or</div>
+            Toujours chercher à dépasser le trou de 20 à 30 cm pour donner une chance à la balle de tomber, et ne jamais rater "en dessous" de la pente (le côté bas).<br><br>
+            <div class="tip-title">Marge stratégique</div>
+            Putt attaqué : Trajectoire tendue, pas besoin de prendre une marge importante par rapport à la pente.</br><br>
+          Putt joué avec la pente : Nécessite un dosage parfait, il faut donc exagérer la marge (viser plus haut que la ligne théorique).</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">05 — PENTE</div>
+          <div class="tip-desc">
+            <div class="tip-title">Putts courts (1m ou moins)</div>
+            Ignorer la pente. Il faut attaquer le putt fermement pour que la balle touche le fond du trou.<br><br>
+            <div class="tip-title">Putts en montée</div>
+            La balle tourne moins. Il ne faut pas avoir peur de dépasser le trou, quitte à rajouter 1 mètre a l'estimation.<br><br>
+            <div class="tip-title">Putts en descente</div>
+            Si il y a une cassure (plusieurs plateaux sur le Green), jouer pour que la balle s’arrête environ à la cassure afin que la balle reprenne de la vitesse grâce à la forme du terrain.</br><br>
+            Si pas, estimé la longueur du putt et retirer 1-2 m selon la pente.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">06 — EXÉCUTION</div>
+          <div class="tip-title">Routine & engagement</div>
+          <div class="tip-desc">Toujours la même routine avant chaque putt. Une fois décidé, s'engager à 100% sur la ligne choisie. Le doute après l'adresse est le pire ennemi.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-putting" placeholder="Ex : Greens rapides ce matin. Tendance à pousser à droite sur les putts droits..." onblur="saveNote('putting')"></textarea>
+        <button class="btn-save" onclick="saveNote('putting')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-putting">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENTAL -->
+  <div class="panel" id="panel-mental">
+    <div class="card-header">
+      <div class="club-icon"></div>
+      <div class="card-header-text">
+        <h2>Le Mental</h2>
+        <span class="badge">Gestion · Stratégie · Mindset</span>
+      </div>
+    </div>
+    <div class="notes-area">
+      <div class="key-tip">
+        <div class="key-tip-icon"></div>
+        <div class="key-tip-text">
+          <div class="key-tip-label">Conseil clé</div>
+          Le golf se joue en grande partie entre les deux oreilles. Un seul coup à la fois, une seule décision à la fois. L'erreur précédente n'existe plus dès que vous marchez vers la prochaine balle.
+        </div>
+      </div>
+      <div class="section-title">Stratégie de jeu</div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-number">01 — STRATÉGIE</div>
+          <div class="tip-title">Jouer vers le centre</div>
+          <div class="tip-desc">Viser le centre du green plutôt que le drapeau. Éviter les risques inutiles. Un par fiable vaut mieux qu'un eagle tenté et un double bogey obtenu.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">02 — ROUTINE</div>
+          <div class="tip-title">Pré-shot routine</div>
+          <div class="tip-desc">Toujours la même séquence : lecture, choix du club, visualisation, 1-2 swings d'entraînement, adresse, swing. La routine évacue la pression et crée la régularité.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">03 — RÉCUPÉRATION</div>
+          <div class="tip-title">Oublier le mauvais coup</div>
+          <div class="tip-desc">Se donner 10 secondes pour réagir à une mauvais coup, puis tourner la page. Les meilleurs pros ont une mémoire courte pour les erreurs.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-number">04 — GESTION</div>
+          <div class="tip-title">Gérer son énergie</div>
+          <div class="tip-desc">S'hydrater, manger léger toutes les 3 trous. La concentration baisse après 12 trous sans carburant. Le manque d'énergie physique affecte le mental.</div>
+        </div>
+      </div>
+      <div class="notes-block">
+        <div class="notes-label">Mes notes personnelles</div>
+        <textarea class="notes-textarea" id="notes-mental" placeholder="Ex : Tendance à précipiter après un double bogey. Me rappeler de respirer..." onblur="saveNote('mental')"></textarea>
+        <button class="btn-save" onclick="saveNote('mental')">Enregistrer mes notes</button>
+        <div class="save-msg" id="msg-mental">✓ Notes sauvegardées</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const panels = ['strategie','trajectoire','fairway','rough','greenposition','gestionduvent','drive','bois','fer','wedge','approche','bunker','putting','mental'];
+
+  function showPanel(id, btn) {
+    panels.forEach(p => {
+      document.getElementById('panel-' + p).classList.remove('active');
+    });
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function saveNote(id) {
+    const val = document.getElementById('notes-' + id).value;
+    localStorage.setItem('golf-note-' + id, val);
+    const msg = document.getElementById('msg-' + id);
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2000);
+  }
+
+  panels.forEach(p => {
+    const saved = localStorage.getItem('golf-note-' + p);
+    if (saved) document.getElementById('notes-' + p).value = saved;
+  });
+</script>
+</body>
+</html>
